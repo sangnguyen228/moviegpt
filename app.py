@@ -43,20 +43,17 @@ def get_actor_info():
         top5_movies = get_top5_movies(movies)
         print(f"Top 5 movies: {top5_movies}")  # Debugging
 
-        # Fetch reviews for the word cloud
         reviews = []
         for m in movies:
             reviews += get_reviews(m[1])
 
         wordcloud = generate_sentiment_wordcloud(reviews)
 
-        # Generate actor description and top 5 movies separately
         description, movie_data = get_result_message(description, top5_movies, actor_name)
         print(f"Description: {description}")  # Debugging
 
-        # Prepare the response with both the description and the movie data
         response = {
-            "description": description + f"Below is some statistical data about {actor_name}:",
+            "description": description + f"\n\nBelow is some statistical data about {actor_name}:",
             "movies": movie_data,
             "wordcloud": wordcloud
         }
@@ -141,10 +138,8 @@ def generate_sentiment_wordcloud(strings_list):
     filtered_words = [word for word in combined_text.split() if word.lower() not in stop_words and has_sentiment(word)]
     filtered_text = ' '.join(filtered_words)
     
-    # Generate the word cloud with the Agg backend
     wordcloud = WordCloud(width=800, height=400, background_color='white').generate(filtered_text)
 
-    # Save the word cloud to an in-memory file (no Tkinter interaction)
     img = io.BytesIO()
     plt.figure(figsize=(10, 5))
     plt.imshow(wordcloud.recolor(color_func=sentiment_color), interpolation='bilinear')
@@ -152,7 +147,6 @@ def generate_sentiment_wordcloud(strings_list):
     plt.savefig(img, format='PNG')
     img.seek(0)
 
-    # Encode the image to base64 to send to the frontend
     img_base64 = base64.b64encode(img.getvalue()).decode('utf-8')
     plt.close()
     return img_base64
@@ -177,10 +171,8 @@ def get_result_message(description: str, top_movies: list, actor_name):
         result = "*"*130 + '\n' + f"{actor_name}'s best 5 movies by IMDB reviewers:\n"
 
         movie_list = []
-        for movie in top_movies[::-1]:  # Reverse to display highest-rated first
+        for movie in top_movies[::-1]: 
             movie_list.append({"title": movie[0], "rating": movie[2]})
-
-        # Return both description and the formatted movie data
         return description, movie_list
     else:
         return "This is not an actor/actress!", []
