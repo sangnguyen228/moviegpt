@@ -1,0 +1,10 @@
+flask
+cinemagoer #for imdbPY
+beautifulsoup4
+requests
+wordcloud
+matplotlib
+textblob
+nltk
+openai
+scikit-learn
